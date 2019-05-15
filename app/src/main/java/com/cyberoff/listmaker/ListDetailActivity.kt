@@ -1,5 +1,7 @@
 package com.cyberoff.listmaker
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -34,8 +36,21 @@ class ListDetailActivity : AppCompatActivity() {
             taskEditText.inputType = InputType.TYPE_CLASS_TEXT
             AlertDialog.Builder(this).setTitle(R.string.task_to_add)
                 .setView(taskEditText)
-                .setPositiveButton(R.string.add_task,{dialog, ->
+                .setPositiveButton(R.string.add_task) { dialog, _ ->
                     val task = taskEditText.text.toString()
-                })
+                    list.tasks.add(task)
+                    val recyclerViewAdapter = listItemRecyclerView.adapter as ListItemsRecyclerViewAdapter
+                    recyclerViewAdapter.notifyItemInserted(list.tasks.size)
+                    dialog.dismiss()
+                }.create().show()
+    }
+
+    override fun onBackPressed() {
+        val bundle = Bundle()
+        bundle.putParcelable(MainActivity.INTENT_LIST_KEY,list)
+        val intent = Intent()
+        intent.putExtras(bundle)
+        setResult(Activity.RESULT_OK,intent)
+        super.onBackPressed()
     }
 }
